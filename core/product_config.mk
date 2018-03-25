@@ -168,21 +168,23 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-ifneq ($(strip $(TARGET_BUILD_APPS)),)
-# An unbundled app build needs only the core product makefiles.
-all_product_configs := $(call get-product-makefiles,\
-    $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
+# A CUSTOM build needs only the CUSTOM product makefiles.
+ifneq ($(KREXUS_BUILD),)
+  all_product_configs := $(shell ls vendor/*/products/$(KREXUS_BUILD).mk)
 else
- ifneq ($(KREXUS_BUILD),)
-    all_product_configs := $(shell find device -path "*/$(KREXUS_BUILD)/aosp_$(KREXUS_BUILD).mk")
+  ifneq ($(strip $(TARGET_BUILD_APPS)),)
+  # An unbundled app build needs only the core product makefiles.  
+  all_product_configs := $(call get-product-makefiles, \
+      $(SRC_TARGET_DIR)/product/AndroidProducts.mk) 
   else
-    # Read in all of the product definitions specified by the AndroidProducts.mk
-    # files in the tree.
-    all_product_configs := $(get-all-product-makefiles)
-  endif # KREXUS_BUILD
-endif
+    # Read in all of the product definitions specified by the AndroidProducts.mk 
+    # files in the tree. 
+    all_product_configs := $(get-all-product-makefiles) 
+  endif # TARGET_BUILD_APPS
+endif # KREXUS_BUILD
 
 all_named_products :=
+
 ifeq ($(KREXUS_BUILD),)
 # Find the product config makefile for the current product.
 # all_product_configs consists items like:

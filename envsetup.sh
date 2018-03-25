@@ -132,9 +132,10 @@ function check_product()
     fi
 
     if (echo -n $1 | grep -q -e "^krexus_") ; then
-       KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
+        KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
+        export BUILD_NUMBER=$( (date +%s%N ; echo $KREXUS_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
-       KREXUS_BUILD=
+        KREXUS_BUILD=
     fi
     export KREXUS_BUILD
 
@@ -573,7 +574,7 @@ function breakfast()
 {
     target=$1
     unset LUNCH_MENU_CHOICES
-    for f in `/bin/ls vendor/krexus/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/*/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
