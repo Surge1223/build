@@ -22,7 +22,7 @@ import sys
 # See PROP_VALUE_MAX in system_properties.h.
 # The constant in system_properties.h includes the terminating NUL,
 # so we decrease the value by 1 here.
-PROP_VALUE_MAX = 91
+PROP_VALUE_MAX = 92
 
 # Put the modifications that you need to make into the /system/build.prop into this
 # function. The prop object has get(name) and put(name,value) methods.
@@ -64,7 +64,7 @@ def validate(prop):
   buildprops = prop.to_dict()
   for key, value in buildprops.iteritems():
     # Check build properties' length.
-    if len(value) > PROP_VALUE_MAX:
+    if len(value) > PROP_VALUE_MAX and not key.startswith("ro."):
       check_pass = False
       sys.stderr.write("error: %s cannot exceed %d bytes: " %
                        (key, PROP_VALUE_MAX))
