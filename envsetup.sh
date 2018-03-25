@@ -129,13 +129,13 @@ function check_product()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-
-    if (echo -n $1 | grep -q -e "^aosp_") ; then
-       CUSTOM_BUILD=
+    if (echo -n $1 | grep -q -e "^krexus_") ; then
+        KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
+        export BUILD_NUMBER=$( (date +%s%N ; echo $KREXUS_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
-       CUSTOM_BUILD=$1
+        KREXUS_BUILD=
     fi
-    export CUSTOM_BUILD
+    export KREXUS_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
@@ -601,7 +601,7 @@ function breakfast()
     local variant=$2
     CUSTOM_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
-    for f in `/bin/ls vendor/nexus/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/*/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f

@@ -2635,7 +2635,7 @@ endif
 ifeq ($(WITH_GMS),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 else
-ifneq ($(CUSTOM_BUILD),)
+ifneq ($(KREXUS_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
@@ -2655,7 +2655,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/ABC_ROM_$(TARGET_PRODUCT)-$(ABC_VERSION).zip
+CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/KREXUS_ROM_$(TARGET_PRODUCT)-$(KREXUS_VERSION).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
@@ -3032,11 +3032,9 @@ $(INTERNAL_FINDBUGS_HTML_TARGET): $(INTERNAL_FINDBUGS_XML_TARGET)
 TESTING_FIND_BUGS := false
 ifneq ($(dont_bother),true)
 include $(sort $(wildcard $(BUILD_SYSTEM)/tasks/*.mk))
--include $(sort $(wildcard vendor/*/build/tasks/*.mk))
 -include $(sort $(wildcard device/*/build/tasks/*.mk))
 -include $(sort $(wildcard product/*/build/tasks/*.mk))
 # Also the project-specific tasks
--include $(sort $(wildcard vendor/*/*/build/tasks/*.mk))
 -include $(sort $(wildcard device/*/*/build/tasks/*.mk))
 -include $(sort $(wildcard product/*/*/build/tasks/*.mk))
 # Also add test specifc tasks
