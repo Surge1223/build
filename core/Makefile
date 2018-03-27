@@ -1190,6 +1190,11 @@ endef
 
 define build-recoveryramdisk
   @echo ----- Making recovery ramdisk ------
+# $(1): output file
+  @echo "Generating Changelog"
+  $(hide) ./vendor/krexus/tools/changelog.sh
+  $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/$(TARGET_PRODUCT)-Changelog.txt
+  @echo ----- Making recovery image ------
   $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
   @echo Copying baseline ramdisk...
@@ -2744,6 +2749,8 @@ bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(KREXUS_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(KREXUS_TARGET_PACKAGE) > $(KREXUS_TARGET_PACKAGE).md5sum
 	@echo "Package complete: $(KREXUS_TARGET_PACKAGE)"
+	@echo " "
+	@echo "Krexus has been built "
 
 endif    # build_ota_package
 

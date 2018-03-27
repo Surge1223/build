@@ -135,11 +135,12 @@ function check_product()
         KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
         export BUILD_NUMBER=$( (date +%s%N ; echo $KREXUS_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
-        KREXUS_BUILD=
+        KREXUS_BUILD=$1
     fi
-    export KREXUS_BUILD
+    export KREXUS_BUILD=$KREXUS_BUILD
+    export TARGET_PRODUCT=$KREXUS_BUILD
 
-        TARGET_PRODUCT=$1 \
+        TARGET_PRODUCT=$KREXUS_BUILD \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
         TARGET_BUILD_APPS= \
@@ -641,8 +642,8 @@ function lunch()
     export TARGET_BUILD_APPS=
 
     local product variant_and_version variant version
-
-    product=${selection%%-*} # Trim everything after first dash
+    product=$(echo -n ${selection%%-*} |sed -e 's/krexus_//g')
+   # product=${selection%%-*} # Trim everything after first dash
     variant_and_version=${selection#*-} # Trim everything up to first dash
     if [ "$variant_and_version" != "$selection" ]; then
         variant=${variant_and_version%%-*}
