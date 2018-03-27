@@ -1,6 +1,6 @@
 # List of variables we want to print in the build banner.
 print_build_config_vars := \
-  XOS_VERSION \
+  KREXUS_VERSION \
   TARGET_BUILD_VARIANT \
   TARGET_ARCH \
   TARGET_ARCH_VARIANT \

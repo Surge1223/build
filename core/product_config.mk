@@ -173,17 +173,17 @@ ifneq ($(strip $(TARGET_BUILD_APPS)),)
 all_product_configs := $(call get-product-makefiles,\
     $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
 else
- ifneq ($(XOS_BUILD),)
-    all_product_configs := $(shell find device -path "*/$(XOS_BUILD)/XOS.mk")
+ ifneq ($(KREXUS_BUILD),)
+    all_product_configs := $(shell find device -path "*/$(KREXUS_BUILD)/aosp_$(KREXUS_BUILD).mk")
   else
     # Read in all of the product definitions specified by the AndroidProducts.mk
     # files in the tree.
     all_product_configs := $(get-all-product-makefiles)
-  endif # XOS_BUILD
+  endif # KREXUS_BUILD
 endif
 
 all_named_products :=
-ifeq ($(XOS_BUILD),)
+ifeq ($(KREXUS_BUILD),)
 # Find the product config makefile for the current product.
 # all_product_configs consists items like:
 # <product_name>:<path_to_the_product_makefile>

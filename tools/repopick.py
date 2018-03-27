@@ -121,8 +121,8 @@ def fetch_query(remote_url, query):
 
 
 if __name__ == '__main__':
-    # Default to halogenOS's Gerrit
-    default_gerrit = 'http://review.halogenos.org'
+    # Default to AOSP Gerrit.
+    default_gerrit = 'http://android.googlesource.com/'
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
         repopick.py is a utility to simplify the process of cherry picking

@@ -52,7 +52,7 @@ except:
     device = product
 
 if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from halogenOS Github (http://github.com/halogenOS)." % device)
+    print("Device %s not found. Attempting to retrieve device repository from krexus-partners Github (http://github.com/krexus-partners)." % device)
 
 repositories = []
 
@@ -72,7 +72,7 @@ def add_auth(githubreq):
         githubreq.add_header("Authorization","Basic %s" % githubauth)
 
 if not depsonly:
-    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:halogenOS+in:name+fork:true" % device)
+    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:krexus-partners+in:name+fork:true" % device)
     add_auth(githubreq)
     try:
         result = json.loads(urllib.request.urlopen(githubreq).read().decode())
@@ -111,7 +111,7 @@ def indent(elem, level=0):
             elem.tail = i
 
 def get_default_revision():
-    return "XOS-8.1"
+    return "o+"
 
 def get_from_manifest(devicename):
     try:
@@ -164,11 +164,11 @@ def add_to_manifest(repositories, fallback_branch = None):
             continue
 
         print('Adding dependency: %s -> %s' % (
-            ("halogenOS/%s" % repo_name) if not "remote" in repository else repo_name,
+            ("krexus-partners/%s" % repo_name) if not "remote" in repository else repo_name,
             repo_target
         ))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": repository['remote'] if "remote" in repository else "XOS",
+            "remote": repository['remote'],
             "name": repo_name if "remote" in repository \
                               else ("%s" % repo_name) })
 
@@ -192,7 +192,7 @@ def add_to_manifest(repositories, fallback_branch = None):
 
 def fetch_dependencies(repo_path, fallback_branch = None):
     print('Looking for dependencies')
-    dependencies_path = repo_path + '/XOS.dependencies'
+    dependencies_path = repo_path + '/krexus.dependencies'
     syncable_repos = []
 
     if os.path.exists(dependencies_path):
@@ -280,4 +280,4 @@ else:
             print("Done")
             sys.exit()
 
-print("Repository for %s not found in the halogenOS Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % device)
+print("Repository for %s not found in the krexus-partners Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % device)

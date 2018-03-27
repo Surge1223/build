@@ -131,12 +131,12 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^XOS_") ; then
-       XOS_BUILD=$(echo -n $1 | sed -e 's/^XOS_//g')
+    if (echo -n $1 | grep -q -e "^krexus_") ; then
+       KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
     else
-       XOS_BUILD=
+       KREXUS_BUILD=
     fi
-    export XOS_BUILD
+    export KREXUS_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
@@ -573,8 +573,7 @@ function breakfast()
 {
     target=$1
     unset LUNCH_MENU_CHOICES
-    add_lunch_combo full-eng
-    for f in `/bin/ls vendor/xos/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/krexus/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -590,8 +589,8 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the XOS model name
-            lunch XOS_$target-userdebug
+            # This is probably just the Krexus model name
+            lunch krexus_$target-userdebug
         fi
     fi
     return $?
@@ -1804,4 +1803,3 @@ unset f
 addcompletions
 
 export ANDROID_BUILD_TOP=$(gettop)
-source ${ANDROID_BUILD_TOP}/external/xos/xostools/xostools.sh

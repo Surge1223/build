@@ -2712,7 +2712,7 @@ endif
 ifeq ($(WITH_GMS),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 else
-ifneq ($(XOS_BUILD),)
+ifneq ($(KREXUS_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
@@ -2736,14 +2736,14 @@ ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
 	$(TARGET_CUSTOM_RELEASETOOL)
 endif
 
-XOS_TARGET_PACKAGE := $(PRODUCT_OUT)/$(XOS_VERSION).zip
+KREXUS_TARGET_PACKAGE := $(PRODUCT_OUT)/$(KREXUS_VERSION).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(XOS_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(XOS_TARGET_PACKAGE) > $(XOS_TARGET_PACKAGE).md5sum
-	@echo "Package complete: $(XOS_TARGET_PACKAGE)"
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(KREXUS_TARGET_PACKAGE)
+	$(hide) $(MD5SUM) $(KREXUS_TARGET_PACKAGE) > $(KREXUS_TARGET_PACKAGE).md5sum
+	@echo "Package complete: $(KREXUS_TARGET_PACKAGE)"
 
 endif    # build_ota_package
 
