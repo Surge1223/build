@@ -228,7 +228,7 @@ if depsonly:
     if repo_path:
         fetch_dependencies(repo_path)
     else:
-        print("Trying dependencies-only mode on a non-existing device tree?")
+        print("Using local dependencies:")
 
     sys.exit()
 
