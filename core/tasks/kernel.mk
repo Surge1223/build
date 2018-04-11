@@ -262,10 +262,13 @@ ccache :=
 ifneq ($(filter-out false,$(USE_CCACHE)),)
     # Detect if the system already has ccache installed.
 ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
-    # Only set clang-3859424 if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
-    TARGET_KERNEL_CLANG_VERSION := clang-4556391
-    # Find the clang-* directory containing the specified version
-    KERNEL_CLANG_VERSION := clang-4556391
+    ifneq ($(TARGET_KERNEL_CLANG_VERSION),)
+        # Find the clang-* directory containing the specified version
+        KERNEL_CLANG_VERSION := $(shell find ./prebuilts/clang/host/$(HOST_OS)-x86/ -name AndroidVersion.txt -exec grep -l $(TARGET_KERNEL_CLANG_VERSION) "{}" \; | sed -e 's|/AndroidVersion.txt$$||g;s|^.*/||g')
+    else
+        # Only set the latest version of clang if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
+        KERNEL_CLANG_VERSION := $(shell ls -d ./prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
+    endif
     TARGET_KERNEL_CLANG_PATH ?= ./prebuilts/clang/host/$(HOST_OS)-x86/$(KERNEL_CLANG_VERSION)/bin
     ifeq ($(KERNEL_ARCH),arm64)
         KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=aarch64-linux-gnu-
