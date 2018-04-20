@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Copyright (C) 2012-2013, The CyanogenMod Project
 # Copyright (C) 2012-2015, SlimRoms Project
-# Copyright (C) 2017, KREXUS
+# Copyright (C) 2017, CUSTOM
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ default_manifest = ".repo/manifests/krexus_default.xml"
 custom_local_manifest = ".repo/local_manifests/krexus_manifest.xml"
 custom_default_revision = "8.1"
 custom_dependencies = "krexus.dependencies"
-org_manifest = "KREXUS-Devices"  # leave empty if org is provided in manifest
-org_display = "KREXUS-Devices"  # needed for displaying
+org_manifest = "CUSTOM-Devices"  # leave empty if org is provided in manifest
+org_display = "CUSTOM-Devices"  # needed for displaying
 
 github_auth = None
 

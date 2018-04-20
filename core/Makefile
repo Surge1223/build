@@ -2635,7 +2635,7 @@ endif
 ifeq ($(WITH_GMS),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 else
-ifneq ($(KREXUS_BUILD),)
+ifneq ($(CUSTOM_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
@@ -2655,25 +2655,42 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/KREXUS_ROM_$(TARGET_PRODUCT)-$(KREXUS_VERSION).zip
+CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/CUSTOM_ROM_$(TARGET_PRODUCT)-$(CUSTOM_VERSION).zip
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
+		build/tools/releasetools/ota_from_target_files
+	@echo "Package OTA: $@"
+	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
+	   ./build/tools/releasetools/ota_from_target_files -v \
+	   --block \
+	   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
+	   -p $(HOST_OUT) \
+	   -k $(KEY_CERT_PAIR) \
+	   --backup=$(backuptool) \
+	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
+	   $(BUILT_TARGET_FILES_PACKAGE) $@
+
+CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/ABCrom_$(TARGET_PRODUCT)-$(ABC_VERSION).zip
+
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
-	@echo " "
-	@echo "THE   db       7MMmmmYp,   .g8mmmd· "
-	@echo "     ;MM:       MM    Yb .dP·      · "
-	@echo "    ,V^MM.      MM    dP dM·        "
-	@echo "   ,M  ·MM      MM···bg  MM"
-	@echo "   AbmmmqMA     MM    ·Y MM.           ____ ____ _  _  "
-	@echo "  A·     VML    MM    ,9 ·Mb.     ,·   |__/ |  | |\/| "
-	@echo ".AMA.   .AMMA  JMMmmmd9    ··bmmmd·    |  \ |__| |  |"
-	@echo " "
+	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum	@echo  "
+	@echo "  "
+	@echo "
+	@echo " .d88888b                                 .d888888  .8888b
+	@echo " 88.    "'                               d8'    88  88   "
+	@echo " `Y88888b. .d8888b. dP.  .dP dP    dP    88aaaaa88a 88aaa
+	@echo "       `8b 88ooood8  `8bd8'  88    88    88     88  88
+	@echo " d8'   .8P 88.  ...  .d88b.  88.  .88    88     88  88
+	@echo "  Y88888P  `88888P' dP'  `dP `8888P88    88     88  dP
+	@echo "\                                 .88
+	@echo "                              d8888P
+	@echo "
+	@echo "
 	@echo -e "Package complete: $(CUSTOM_TARGET_PACKAGE)"
-	@echo " "
-	@echo "You are officially a karnt now "
+	@echo "
 
 endif    # build_ota_package
 

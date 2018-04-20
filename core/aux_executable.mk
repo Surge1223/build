@@ -55,16 +55,16 @@ include $(BUILD_SYSTEM)/binary.mk
 
 aux_output := $(linked_module)
 
-ifneq ($(LOCAL_KREXUS_BUILD_STEP_INPUT),)
-ifneq ($(LOCAL_KREXUS_BUILD_STEP_OUTPUT),)
+ifneq ($(LOCAL_CUSTOM_BUILD_STEP_INPUT),)
+ifneq ($(LOCAL_CUSTOM_BUILD_STEP_OUTPUT),)
 
 # injecting custom build steps
-$(LOCAL_KREXUS_BUILD_STEP_INPUT): $(aux_output)
+$(LOCAL_CUSTOM_BUILD_STEP_INPUT): $(aux_output)
 	@echo "$(AUX_DISPLAY) custom copy: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
 	$(hide) $(copy-file-to-target)
 
-aux_output := $(LOCAL_KREXUS_BUILD_STEP_OUTPUT)
+aux_output := $(LOCAL_CUSTOM_BUILD_STEP_OUTPUT)
 
 endif
 endif

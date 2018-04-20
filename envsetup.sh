@@ -130,12 +130,12 @@ function check_product()
         return
     fi
     if (echo -n $1 | grep -q -e "^krexus_") ; then
-        KREXUS_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
-        export BUILD_NUMBER=$( (date +%s%N ; echo $KREXUS_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
+        CUSTOM_BUILD=$(echo -n $1 | sed -e 's/^krexus_//g')
+        export BUILD_NUMBER=$( (date +%s%N ; echo $CUSTOM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
-        KREXUS_BUILD=
+        CUSTOM_BUILD=
     fi
-    export KREXUS_BUILD
+    export CUSTOM_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
