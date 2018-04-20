@@ -2669,28 +2669,16 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/ABCrom_$(TARGET_PRODUCT)-$(ABC_VERSION).zip
+CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/SexyAf_$(TARGET_PRODUCT)-$(CUSTOM_VERSION).zip
 
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum	@echo  "
-	@echo "  "
-	@echo "
-	@echo " .d88888b                                 .d888888  .8888b
-	@echo " 88.    "'                               d8'    88  88   "
-	@echo " `Y88888b. .d8888b. dP.  .dP dP    dP    88aaaaa88a 88aaa
-	@echo "       `8b 88ooood8  `8bd8'  88    88    88     88  88
-	@echo " d8'   .8P 88.  ...  .d88b.  88.  .88    88     88  88
-	@echo "  Y88888P  `88888P' dP'  `dP `8888P88    88     88  dP
-	@echo "\                                 .88
-	@echo "                              d8888P
-	@echo "
-	@echo "
+	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e "Package complete: $(CUSTOM_TARGET_PACKAGE)"
-	@echo "
+	@echo ""
 
 endif    # build_ota_package
 
