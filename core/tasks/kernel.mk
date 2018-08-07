@@ -67,7 +67,6 @@
 #                                          modules in root instead of system
 
 TARGET_AUTO_KDIR := $(shell echo $(TARGET_DEVICE_DIR) | sed -e 's/^device/kernel/g')
-AOSP_ROOT := ../../../../../..
 ## Externally influenced variables
 # kernel location - optional, defaults to kernel/<vendor>/<device>
 TARGET_KERNEL_SOURCE ?= $(TARGET_AUTO_KDIR)
@@ -258,6 +257,7 @@ KERNEL_TOOLCHAIN_PATH := $(KERNEL_TOOLCHAIN)/$(KERNEL_TOOLCHAIN_PREFIX)
 endif
 endif
 
+#BUILD_TOP := $(shell pwd)
 # Initialize ccache  as an empty argument.
 ccache :=
 # Fill the ccache argument if USE_CCACHE is not set to false.
@@ -329,7 +329,8 @@ define clean-module-folder
 endef
 
 ifeq ($(HOST_OS),darwin)
-  MAKE_FLAGS += C_INCLUDE_PATH=$(AOSP_ROOT)/external/elfutils/libelf
+  MAKE_FLAGS += C_INCLUDE_PATH=$(AOSP_ROOT)/external/elfutils/libelf:/usr/local/opt/openssl/include
+  MAKE_FLAGS += LIBRARY_PATH=/usr/local/opt/openssl/lib
 endif
 
 ifeq ($(TARGET_KERNEL_MODULES),)
