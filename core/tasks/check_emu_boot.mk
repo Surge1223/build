@@ -13,7 +13,7 @@ $(check_emu_boot0) : $(INSTALLED_QEMU_SYSTEMIMAGE)  $(INSTALLED_QEMU_VENDORIMAGE
 	$(hide) rm -f $(PRIVATE_SUCCESS_FILE)
 	$(hide) rm -f $(PRIVATE_FAIL_FILE)
 	(export ANDROID_PRODUCT_OUT=$$(cd $(PRODUCT_OUT);pwd);\
-		export ANDROID_BUILD_TOP=$$(pwd);\
+		export .=$$(pwd);\
 		$(PRIVATE_EMULATOR_BOOT_TEST_SH) > $(check_emu_boot0))
 	(if grep -q $(PRIVATE_BOOT_COMPLETE_STRING) $(check_emu_boot0);\
 	then echo boot_succeeded > $(PRIVATE_SUCCESS_FILE); fi)
