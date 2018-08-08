@@ -69,7 +69,7 @@
 #                                          modules in root instead of system
 
 TARGET_AUTO_KDIR := $(shell echo $(TARGET_DEVICE_DIR) | sed -e 's/^device/kernel/g')
-
+AOSP_ROOT := ../../../../../..
 ## Externally influenced variables
 # kernel location - optional, defaults to kernel/<vendor>/<device>
 TARGET_KERNEL_SOURCE ?= $(TARGET_AUTO_KDIR)
@@ -267,10 +267,10 @@ ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
         KERNEL_CLANG_VERSION := $(strip $(shell grep -r "ClangDefaultVersion "  build/soong/cc/config/global.go |sed -e 's#ClangDefaultVersion      = "##'g | sed 's/"//'))
     else
         # Only set the latest version of clang if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
-        KERNEL_CLANG_VERSION := $(shell ls -d ./prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
+        KERNEL_CLANG_VERSION := $(shell ls -d $(AOSP_ROOT)/prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
     endif
     $(info Using '$(KERNEL_CLANG_VERSION)' to compile)
-    TARGET_KERNEL_CLANG_PATH ?= ./prebuilts/clang/host/$(HOST_OS)-x86/$(KERNEL_CLANG_VERSION)/bin
+    TARGET_KERNEL_CLANG_PATH ?= $(AOSP_ROOT)/prebuilts/clang/host/$(HOST_OS)-x86/$(KERNEL_CLANG_VERSION)/bin
     ifeq ($(KERNEL_ARCH),arm64)
         KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=aarch64-linux-gnu-
     else ifeq ($(KERNEL_ARCH),arm)
@@ -286,7 +286,7 @@ ifneq ($(USE_CCACHE),)
     ccache := $(shell which ccache)
     # Use the prebuilt one if host doesn't have ccache installed.
     ifeq ($(ccache),)
-        ccache := ./prebuilts/misc/$(HOST_PREBUILT_TAG)/ccache/ccache
+        ccache := $(AOSP_ROOT)/prebuilts/misc/$(HOST_PREBUILT_TAG)/ccache/ccache
         # Check that the executable is here.
         ccache := $(strip $(wildcard $(ccache)))
     endif
@@ -325,7 +325,7 @@ define clean-module-folder
 endef
 
 ifeq ($(HOST_OS),darwin)
-  MAKE_FLAGS += C_INCLUDE_PATH=./external/elfutils/libelf
+  MAKE_FLAGS += C_INCLUDE_PATH=$(AOSP_ROOT)/external/elfutils/libelf
 endif
 
 ifeq ($(TARGET_KERNEL_MODULES),)
