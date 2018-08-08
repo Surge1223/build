@@ -237,6 +237,7 @@ KERNEL_MODULES_OUT := $(TARGET_OUT)/lib/modules
 endif
 
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(strip $(TARGET_KERNEL_CROSS_COMPILE_PREFIX))
+TARGET_KERNEL_CLANG_VERSION := $(strip $(shell grep -r "ClangDefaultVersion "  build/soong/cc/config/global.go |sed -e 's#ClangDefaultVersion      = "##'g | sed 's/"//'))
 ifneq ($(TARGET_KERNEL_CROSS_COMPILE_PREFIX),)
 KERNEL_TOOLCHAIN_PREFIX ?= $(TARGET_KERNEL_CROSS_COMPILE_PREFIX)
 else ifeq ($(KERNEL_ARCH),arm64)
@@ -257,18 +258,18 @@ endif
 
 # Initialize ccache  as an empty argument.
 ccache :=
-
 # Fill the ccache argument if USE_CCACHE is not set to false.
 ifneq ($(filter-out false,$(USE_CCACHE)),)
     # Detect if the system already has ccache installed.
 ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
     ifneq ($(TARGET_KERNEL_CLANG_VERSION),)
         # Find the clang-* directory containing the specified version
-        KERNEL_CLANG_VERSION := $(shell find ./prebuilts/clang/host/$(HOST_OS)-x86/ -name AndroidVersion.txt -exec grep -l $(TARGET_KERNEL_CLANG_VERSION) "{}" \; | sed -e 's|/AndroidVersion.txt$$||g;s|^.*/||g')
+        KERNEL_CLANG_VERSION := $(strip $(shell grep -r "ClangDefaultVersion "  build/soong/cc/config/global.go |sed -e 's#ClangDefaultVersion      = "##'g | sed 's/"//'))
     else
         # Only set the latest version of clang if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
         KERNEL_CLANG_VERSION := $(shell ls -d ./prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
     endif
+    $(info Using '$(KERNEL_CLANG_VERSION)' to compile)
     TARGET_KERNEL_CLANG_PATH ?= ./prebuilts/clang/host/$(HOST_OS)-x86/$(KERNEL_CLANG_VERSION)/bin
     ifeq ($(KERNEL_ARCH),arm64)
         KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=aarch64-linux-gnu-
@@ -297,9 +298,9 @@ else
 $(info The usage of ccache is set to '$(USE_CCACHE)')
 endif
 
-
 ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
     KERNEL_CROSS_COMPILE := CROSS_COMPILE="$(KERNEL_TOOLCHAIN_PATH)"
+    TARGET_CROSS_COMPILE_ARM32 := CROSS_COMPILE_ARM32="$(TARGET_CROSS_COMPILE_ARM32)"
     KERNEL_CC ?= CC="$(ccache) $(TARGET_KERNEL_CLANG_PATH)/clang"
 else
     KERNEL_CROSS_COMPILE := CROSS_COMPILE="$(ccache) $(KERNEL_TOOLCHAIN_PATH)"
