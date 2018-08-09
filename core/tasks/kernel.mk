@@ -264,10 +264,10 @@ ifneq ($(filter-out false,$(USE_CCACHE)),)
 ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
     ifneq ($(TARGET_KERNEL_CLANG_VERSION),)
         # Find the clang-* directory containing the specified version
-        KERNEL_CLANG_VERSION := $(shell ls -d $(AOSP_ROOT)/prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
+        KERNEL_CLANG_VERSION := $(strip $(shell grep -r "ClangDefaultVersion "  build/soong/cc/config/global.go |sed -e 's#ClangDefaultVersion      = "##'g | sed 's/"//'))
     else
         # Only set the latest version of clang if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
-        KERNEL_CLANG_VERSION := $(strip $(shell grep -r "ClangDefaultVersion "  build/soong/cc/config/global.go |sed -e 's#ClangDefaultVersion      = "##'g | sed 's/"//'))
+        KERNEL_CLANG_VERSION := $(shell ls -d $(AOSP_ROOT)/prebuilts/clang/host/$(HOST_OS)-x86/clang-* | xargs -n 1 basename | tail -1)
     endif
     $(info Using '$(KERNEL_CLANG_VERSION)' to compile)
     TARGET_KERNEL_CLANG_PATH ?= $(AOSP_ROOT)/prebuilts/clang/host/$(HOST_OS)-x86/$(KERNEL_CLANG_VERSION)/bin
