@@ -87,17 +87,17 @@ EMPTY_DIRECTORY := $(OUT_DIR)/empty
 $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 
 # CTS-specific config.
--include cts/build/config.mk
+#-include cts/build/config.mk
 # VTS-specific config.
--include test/vts/tools/vts-tradefed/build/config.mk
+#-include test/vts/tools/vts-tradefed/build/config.mk
 # device-tests-specific-config.
--include tools/tradefederation/build/suites/device-tests/config.mk
+#-include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
--include tools/tradefederation/build/suites/general-tests/config.mk
+#-include tools/tradefederation/build/suites/general-tests/config.mk
 # STS-specific config.
--include test/sts/tools/sts-tradefed/build/config.mk
+#-include test/sts/tools/sts-tradefed/build/config.mk
 # CTS-Instant-specific config
--include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
+#-include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files
@@ -455,7 +455,20 @@ subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android
 subdir_makefiles_total := $(words $(subdir_makefiles))
 .KATI_READONLY := subdir_makefiles_total
 
+VERBOSE_OUTPUT := $(shell echo $VERBOSE_OUTPUT)
+
+ifeq ($(VERBOSE_OUPUT),true)
+$(foreach mk, $(subdir_makefiles), \
+  $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...) \
+  $(eval include $(mk)) \
+  $(checking deps of modules from ===> $(mk)) \
+  $(eval LOCAL_MODULE \:=$(mk)) \
+  $(eval LOCAL_DIR \:= $(patsubst %/,%,$(dir $(mk)))) \
+  $(info =======> LOCAL_MODULE =======> $(LOCAL_MODULE)) \
+)
+else
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
+endif
 
 ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
 # Bring in the PDK platform.zip modules.

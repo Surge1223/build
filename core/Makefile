@@ -28,6 +28,7 @@ product_copy_files_ignored :=
 $(foreach cf,$(unique_product_copy_files_pairs), \
     $(eval _src := $(call word-colon,1,$(cf))) \
     $(eval _dest := $(call word-colon,2,$(cf))) \
+    $(call check-product-copy-files,$(cf)) \
     $(if $(filter $(unique_product_copy_files_destinations),$(_dest)), \
         $(eval product_copy_files_ignored += $(cf)), \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
@@ -409,60 +410,60 @@ endif
 # vendor build.prop
 #
 # Prevent overwriting build.prop in system
-ifneq ($(TARGET_COPY_OUT_VENDOR),system)
+# ifneq ($(TARGET_COPY_OUT_VENDOR),system)
 # For verifying that the vendor build is what we think it is
-INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
-ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
-
-ifdef property_overrides_split_enabled
-FINAL_VENDOR_BUILD_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
-FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
-endif  # property_overrides_split_enabled
-
-ifdef TARGET_VENDOR_PROP
-vendor_prop_file := $(TARGET_VENDOR_PROP)
-else
-vendor_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
-endif
-$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_system_build_prop)
-	@echo Target vendor buildinfo: $@
-	@mkdir -p $(dir $@)
-	$(hide) echo > $@
-	$(hide) grep 'ro.product.first_api_level' $(intermediate_system_build_prop) >> $@ || true
-	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
-	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
-	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
-	$(hide) echo ro.vendor.build.security_patch="$(VENDOR_SECURITY_PATCH)">>$@
-	$(hide) echo ro.vendor.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
-	$(hide) echo ro.vendor.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
-	$(hide) echo ro.vendor.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
-	$(hide) TARGET_DEVICE="$(TARGET_DEVICE)" \
-			PRODUCT_NAME="$(TARGET_PRODUCT)" \
-			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
-			PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-			PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
-			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
-			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
-	        bash $(VENDOR_BUILDINFO_SH) >> $@
-	$(hide) $(foreach file,$(vendor_prop_file), \
-		if [ -f "$(file)" ]; then \
-			echo "#" >> $@; \
-			echo Target buildinfo from: "$(file)"; \
-			echo "# from $(file)" >> $@; \
-			echo "#" >> $@; \
-			cat $(file) >> $@; \
-		fi;)
-ifdef property_overrides_split_enabled
-	$(hide) echo "#" >> $@; \
-	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
-		echo "$(line)" >> $@;)
-endif  # property_overrides_split_enabled
-endif  # TARGET_COPY_OUT_VENDOR=system
-	$(hide) build/make/tools/post_process_props.py $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_PROPERTY_BLACKLIST)
+# INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
+# ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
+#
+# ifdef property_overrides_split_enabled
+# FINAL_VENDOR_BUILD_PROPERTIES += \
+#     $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
+# FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+#     $(FINAL_VENDOR_BUILD_PROPERTIES),=)
+# endif  # property_overrides_split_enabled
+#
+#ifdef TARGET_VENDOR_PROP
+#vendor_prop_file := $(TARGET_VENDOR_PROP)
+#else
+#vendor_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
+#endif
+#$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_system_build_prop)
+#        @echo Target vendor buildinfo: $@
+#        @mkdir -p $(dir $@)
+#        $(hide) echo > $@
+#        $(hide) grep 'ro.product.first_api_level' $(intermediate_system_build_prop) >> $@ || true
+#        $(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
+#        $(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
+#        $(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+#        $(hide) echo ro.vendor.build.security_patch="$(VENDOR_SECURITY_PATCH)">>$@
+#        $(hide) echo ro.vendor.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
+#        $(hide) echo ro.vendor.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
+#        $(hide) echo ro.vendor.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
+#        $(hide) TARGET_DEVICE="$(TARGET_DEVICE)" \
+#                        PRODUCT_NAME="$(TARGET_PRODUCT)" \
+#                        PRODUCT_BRAND="$(PRODUCT_BRAND)" \
+#                        PRODUCT_MODEL="$(PRODUCT_MODEL)" \
+#                        PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
+#                        TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
+#                        TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
+#                bash $(VENDOR_BUILDINFO_SH) >> $@
+#        $(hide) $(foreach file,$(vendor_prop_file), \
+#                if [ -f "$(file)" ]; then \
+#                        echo "#" >> $@; \
+#                        echo Target buildinfo from: "$(file)"; \
+#                        echo "# from $(file)" >> $@; \
+#                        echo "#" >> $@; \
+#                        cat $(file) >> $@; \
+#               fi;)
+#ifdef property_overrides_split_enabled
+#        $(hide) echo "#" >> $@; \
+#                echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
+#                echo "#" >> $@;
+#        $(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
+#                echo "$(line)" >> $@;)
+#endif  # property_overrides_split_enabled
+#endif  # TARGET_COPY_OUT_VENDOR=system
+#  $(hide) build/make/tools/post_process_props.py $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_PROPERTY_BLACKLIST)
 
 # -----------------------------------------------------------------
 # product build.prop
@@ -2919,6 +2920,9 @@ $(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
+ifeq ($(build_ota_package),true)
+# -----------------------------------------------------------------
+# OTA update package
 
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
@@ -2936,11 +2940,12 @@ else
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BROTLI)
 endif
 
+CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/SexyAf_$(TARGET_PRODUCT)-$(CUSTOM_VERSION).zip
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 		build/make/tools/releasetools/ota_from_target_files
 	@echo "Package OTA: $@"
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-	   build/make/tools/releasetools/ota_from_target_files -v \
+	   ./build/make/tools/releasetools/ota_from_target_files -v \
 	   --block \
 	   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
 	   -p $(HOST_OUT) \
@@ -2948,14 +2953,13 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(TARGET_PRODUCT).zip
-
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e "Package complete: $(CUSTOM_TARGET_PACKAGE)"
+	@echo ""
 
 endif    # build_ota_package
 
@@ -3312,6 +3316,7 @@ $(INTERNAL_FINDBUGS_HTML_TARGET): $(INTERNAL_FINDBUGS_XML_TARGET)
 
 # -----------------------------------------------------------------
 # These are some additional build tasks that need to be run.
+TESTING_FIND_BUGS := false
 ifneq ($(dont_bother),true)
 include $(sort $(wildcard $(BUILD_SYSTEM)/tasks/*.mk))
 -include $(sort $(wildcard vendor/*/build/tasks/*.mk))
@@ -3322,8 +3327,10 @@ include $(sort $(wildcard $(BUILD_SYSTEM)/tasks/*.mk))
 -include $(sort $(wildcard device/*/*/build/tasks/*.mk))
 -include $(sort $(wildcard product/*/*/build/tasks/*.mk))
 # Also add test specifc tasks
+ifeq (true,$(TESTING_FIND_BUGS))
 include $(sort $(wildcard platform_testing/build/tasks/*.mk))
 include $(sort $(wildcard test/vts/tools/build/tasks/*.mk))
+endif
 endif
 
 include $(BUILD_SYSTEM)/product-graph.mk
