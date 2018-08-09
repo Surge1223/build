@@ -2920,9 +2920,6 @@ $(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
-ifeq ($(build_ota_package),true)
-# -----------------------------------------------------------------
-# OTA update package
 
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
