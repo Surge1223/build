@@ -1,5 +1,6 @@
 # Print a list of the modules that could be built
 
+current_makefile := $(lastword $(MAKEFILE_LIST))
 MODULE_INFO_JSON := $(PRODUCT_OUT)/module-info.json
 
 $(MODULE_INFO_JSON):
@@ -24,3 +25,7 @@ ifndef ONE_SHOT_MAKEFILE
 files: $(MODULE_INFO_JSON)
 endif
 
+.PHONY: module-info.json
+module-info.json: $(MODULE_INFO_JSON)
+
+$(call dist-for-goals, module-info.json, $(MODULE_INFO_JSON))
