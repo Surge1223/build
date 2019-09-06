@@ -3087,6 +3087,10 @@ INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIMAGE_TARGET)))
 endif
 
+ifdef TARGET_NEEDS_DTBIMAGE
+INSTALLED_DTBIMAGE_TARGET := $(PRODUCT_OUT)/dtb.img
+endif
+
 # -----------------------------------------------------------------
 # vbmeta image
 ifeq ($(BOARD_AVB_ENABLE),true)
