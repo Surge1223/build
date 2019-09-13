@@ -4286,7 +4286,6 @@ endif
 
 ifneq ($(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE),true)
   name := $(name)-ota-$(FILE_NAME_TAG)
-  args := --output_metadata_path
 else
   name := $(name)-ota-retrofit-$(FILE_NAME_TAG)
   outn := "(retrofit dynamic partitions)"
